@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 
-const TOKEN = 'pk.eyJ1IjoiY2hpYWJlcnJ5IiwiYSI6ImNqcWlnb2cwYzYwZnMzeHVsODNkN2VzbnkifQ.m51M9ZlZxX_bOacxb_xREA';
 
-mapboxgl.accessToken='pk.eyJ1IjoiY2hpYWJlcnJ5IiwiYSI6ImNqcWlnb2cwYzYwZnMzeHVsODNkN2VzbnkifQ.m51M9ZlZxX_bOacxb_xREA';
+mapboxgl.accessToken='';
 
 const mapStyle = {
   //border: '5px solid pink',
