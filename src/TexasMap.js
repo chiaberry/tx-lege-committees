@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
+import data from './data.json';
 
 
 mapboxgl.accessToken='';
@@ -32,6 +33,21 @@ class TexasMap extends Component {
       zoom
     });
 
+    map.on('load', () => {
+      map.addSource('districts', {
+        type: 'geojson', 
+        data
+      });
+
+      map.addLayer({
+        id: 'districts',
+        type: 'fill',
+        source: 'districts'
+      });
+
+      console.log('onload');
+    })
+
     map.on('move', () => {
       console.log(map.getCenter());
     })
@@ -41,7 +57,7 @@ class TexasMap extends Component {
         const { lng, lat, zoom } = this.state;
     return (
       <div>
-        <div className="inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">
+        <div className="inline-block top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold">
           <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
         </div>
         <div
