@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import TexasMap from './TexasMap.js';
+// import TexasMap from './TexasMapOlder.js';
 
 class App extends Component {
   render() {

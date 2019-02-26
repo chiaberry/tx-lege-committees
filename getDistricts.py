@@ -7,8 +7,10 @@ pattern = r"(district=)(\d{0,3})"
 
 for x in f:
   match = re.search(pattern, x)
-  districts.append(int(match.group(2)))
+  if match:
+    districts.append(int(match.group(2)))
 
 print(districts)
+print(len(districts))
 
 
