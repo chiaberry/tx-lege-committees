@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 // import mapboxgl from 'mapbox-gl';
 import ReactMapGL from 'react-map-gl';
 import { house } from './house.js'
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
 import './App.css';
 
 
@@ -27,6 +33,7 @@ class TexasMap extends Component {
       },
       counties: [],
       districts: [],
+      comName: 'test',
       mapStyle: {
         "version": 8,
         "name": "default",
@@ -49,8 +56,10 @@ class TexasMap extends Component {
             filter: ['in', 'DIST_NBR', '49']
           }
         ]
+      }
     }
-  }
+    this.removeMapLayer = this.removeMapLayer.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   };
 
   componentDidMount() {
@@ -63,16 +72,6 @@ class TexasMap extends Component {
         url: 'mapbox://chiaberry.cj584zqk'
       });
     })
-
-    // map.on('move', () => {
-    //   console.log(map.getCenter());
-    // })
-  }
-
-  getFilterExp() {
-    const base = ['in', 'DIST_NBR']
-    console.log(base.concat(this.state.districts));
-    return base.concat(this.state.districts);    
   }
 
   removeMapLayer() {
@@ -83,25 +82,29 @@ class TexasMap extends Component {
 
   addMapLayer() {
     const map = this.reactMap.getMap();
-         map.addLayer({
-        id: 'districtsPick',
-        source: 'districts',
-        'source-layer': 'Texas_State_House_Districts-9q65q4',
-        type: 'fill',
-        paint: {
-          "fill-outline-color": 'black',
-          "fill-color": 'rgba(44, 98, 159, 0.5)'
-        },
-        filter: this.state.districts
-        //filter: ['in', 'DIST_NBR', 49, 100, 10]
-        });
+    map.addLayer({
+      id: 'districtsPick',
+      source: 'districts',
+      'source-layer': 'Texas_State_House_Districts-9q65q4',
+      type: 'fill',
+      paint: {
+        "fill-outline-color": 'black',
+        "fill-color": 'rgba(44, 98, 159, 0.5)'
+      },
+      filter: this.state.districts
+    });
   }
 
-  renderData(ctys) {
-    return (
-        {
-         "type":"FeatureCollection",
-          "features":this.state.counties })
+  handleChange(evt) {
+    this.removeMapLayer();
+    const answer = house.filter(obj => (obj.id === evt.target.value))
+    console.log(answer);
+    this.setState(
+      { 
+        districts: ['in', 'DIST_NBR'].concat(answer[0].districts),
+        comName: answer[0].name,
+      }, 
+      this.addMapLayer);
   }
 
   render() {
@@ -109,35 +112,60 @@ class TexasMap extends Component {
     const { districts } = this.state;
     return (
       <div>
-        <div className="left">
+        <CssBaseline />
+        <Grid container spacing={24}>
+          <Grid item xs={4}>
           <div className="committees">
-            <select name={'house'} onChange={evt=> {
-              this.removeMapLayer();
-              const answer = house.filter(obj => (obj.id===evt.target.value))
-              this.setState({districts: ['in', 'DIST_NBR'].concat(answer[0].districts)}, this.addMapLayer)
-            }}>
-              <option value={[]}>{''}</option>
-              {house.map(com => (
-                <option key={com.id} value={com.id}> {com.name}</option>))}
+            <FormControl
+              fullWidth
+            >
+              <InputLabel htmlFor="house-list">House Committee</InputLabel>
+              <Select
+                value={this.state.comName}
+                onChange={this.handleChange}
+                autoWidth
+                inputProps={{
+                  name: 'House Committees',
+                  id: 'house-list',
+                }}
+              >
+                {house.map(com => (
+                  <MenuItem value={com.id}>{com.name}</MenuItem>
+                  ))
+                }
+              </Select>
+            </FormControl>
+            {// <select name={'house'} onChange={evt=> {
+            //   this.removeMapLayer();
+            //   const answer = house.filter(obj => (obj.id===evt.target.value))
+            //   this.setState({districts: ['in', 'DIST_NBR'].concat(answer[0].districts)}, this.addMapLayer)
+            // }}>
+            //   <option value={[]}>{''}</option>
+            //   {house.map(com => (
+            //     <option key={com.id} value={com.id}> {com.name}</option>))}
 
-            </select>
+            // </select>
+          }
           </div>
-        </div>
-        <ReactMapGL
-          ref={(reactMap)=> {this.reactMap = reactMap; }}
-          {...this.state.viewport}
-          onViewportChange={(viewport) => this.setState({viewport})}
-          mapboxApiAccessToken={MBTOKEN}
-          onLoad={()=>console.log('loaded ', this.state.mapStyle)}
-          mapStyle={'mapbox://styles/mapbox/outdoors-v9'}
-        />
-
-        <div> 
-          <ul>
-            {this.state.districts.map(d => (
-            <li>{d}</li>))}
-          </ul>
-        </div>
+            <div> 
+            <ul>
+              <span>{this.state.comName}</span>
+              {this.state.districts.slice(2).map(d => (
+              <li>{d}</li>))}
+            </ul>
+            </div>
+          </Grid>
+        <Grid item xs={8}>
+          <ReactMapGL
+            ref={(reactMap)=> {this.reactMap = reactMap; }}
+            {...this.state.viewport}
+            onViewportChange={(viewport) => this.setState({viewport})}
+            mapboxApiAccessToken={MBTOKEN}
+            onLoad={()=>console.log('loaded ', this.state.mapStyle)}
+            mapStyle={'mapbox://styles/mapbox/outdoors-v9'}
+          />
+        </Grid>
+        </Grid>
       </div>
     );
   }
