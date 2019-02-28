@@ -1,27 +1,30 @@
 import React, { Component } from 'react';
 // import mapboxgl from 'mapbox-gl';
 import ReactMapGL from 'react-map-gl';
-import { house } from './house.js'
+import { house, houseMembers } from './house.js'
+import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
+import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
+import Typography from '@material-ui/core/Typography';
+import Toolbar from '@material-ui/core/Toolbar'
 import './App.css';
 
 
 const MBTOKEN = process.env.REACT_APP_MAPBOX_KEY
 
-
-const divStyle = {
-  margin: '40px',
-  border: '5px solid pink'
-};
+const styles = theme => ({
+  root: {
+    display: 'flex',
+  },
+  committees: {
+    maxHeight: 300,
+    overflow: 'scroll'
+  },
+});
 
 class TexasMap extends Component {
 
@@ -38,7 +41,7 @@ class TexasMap extends Component {
       counties: [],
       districts: [],
       com: 0,
-      comName: 'Test 123',
+      comName: '',
       mapStyle: {
         "version": 8,
         "name": "default",
@@ -115,35 +118,59 @@ class TexasMap extends Component {
   }
 
   render() {
-    const { districts } = this.state;
+    const { classes } = this.props;
     return (
       <div>
         <CssBaseline />
+          <Toolbar>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              className={classes.title}
+            >
+              Texas Legislative Comittee Map
+            </Typography>
+          </Toolbar>
         <Grid container spacing={24}>
           <Grid item xs={4}>
-          <div className="committees">
 
+            <Paper>
+            <Typography> Choose a House Committee</Typography>
+            <div className={classes.committees}>
+            <List dense>
+              {house.map(com => (
+                  <ListItem
+                    key={com.id}
+                    onClick={() => this.handleChange(com)}
+                    selected={com.id === this.state.com}
+                  >
+                    <ListItemText primary={com.name} />
+                  </ListItem>
+                ))}
+            </List>
 
-          <List dense>
-            {house.map(com => (
-                <ListItem
-                  key={com.id}
-                  onClick={() => this.handleChange(com)}
-                  selected={com.id === this.state.com}
-                >
-                  <ListItemText primary={com.name} />
-                </ListItem>
-              ))}
-          </List>
-
-          </div>
-            <div> 
-            <ul>
-              <span>{this.state.comName}</span>
-              {this.state.districts.slice(2).map(d => (
-              <li>{d}</li>))}
-            </ul>
             </div>
+            </Paper>
+            <Paper>
+              <ul>
+                <span>{this.state.comName}</span>
+                <p> 
+                  {this.state.com !== 0 && <a 
+                    href={`https://house.texas.gov/committees/committee/?committee=${this.state.com}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                  Link to official committee website
+                  </a>}
+                </p>
+                {this.state.districts.slice(2).map(d => (
+                <li> {houseMembers[d] ? 
+                  `${d} - ${houseMembers[d][1]}, ${houseMembers[d][0]||''}` :
+                  d}</li>))}
+              </ul>
+            </Paper>
           </Grid>
         <Grid item xs={8}>
           <ReactMapGL
@@ -161,4 +188,4 @@ class TexasMap extends Component {
   }
 }
 
-export default TexasMap;
+export default withStyles(styles)(TexasMap);
