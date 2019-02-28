@@ -11,6 +11,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar'
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import './App.css';
 
 
@@ -84,7 +89,6 @@ class TexasMap extends Component {
 
   removeMapLayer() {
     const map = this.reactMap.getMap();
-    console.log(map.getLayer('districtsPick'))
     map.removeLayer('districtsPick');
   }
 
@@ -130,7 +134,7 @@ class TexasMap extends Component {
               noWrap
               className={classes.title}
             >
-              Texas Legislative Comittee Map
+              Texas Legislative Committee Map
             </Typography>
           </Toolbar>
         <Grid container spacing={24}>
@@ -154,22 +158,42 @@ class TexasMap extends Component {
             </div>
             </Paper>
             <Paper>
-              <ul>
-                <span>{this.state.comName}</span>
-                <p> 
-                  {this.state.com !== 0 && <a 
-                    href={`https://house.texas.gov/committees/committee/?committee=${this.state.com}`}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                  Link to official committee website
-                  </a>}
-                </p>
-                {this.state.districts.slice(2).map(d => (
+              <p> 
+                {this.state.com !== 0 && <a 
+                  href={`https://house.texas.gov/committees/committee/?committee=${this.state.com}`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                {this.state.comName}
+                </a>}
+              </p>
+
+              <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">District</TableCell>
+                  <TableCell align="left">Representative</TableCell>
+                  <TableCell align="center">Party</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {this.state.districts.slice(2).map(row => {
+                  if (!houseMembers[row]) {
+                    console.log(row)
+                  }
+                  return (<TableRow key={row}>
+                    <TableCell align="center">{row}</TableCell>
+                    <TableCell align="left">{houseMembers[row][1]}</TableCell>
+                    <TableCell align="center">{houseMembers[row][0]}</TableCell>
+                  </TableRow>)
+                })}
+              </TableBody>
+            </Table>
+
+                {/*this.state.districts.slice(2).map(d => (
                 <li> {houseMembers[d] ? 
                   `${d} - ${houseMembers[d][1]}, ${houseMembers[d][0]||''}` :
-                  d}</li>))}
-              </ul>
+                  d}</li>))*/}
             </Paper>
           </Grid>
         <Grid item xs={8}>

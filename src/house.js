@@ -199,8 +199,8 @@ export const house = [
 ]
 
 export const houseMembers = {
-131: ["D", "Allen, Alma A"], 
-121: ["Allison, Steve", 'R'],
+131: ["Allen, Alma A", "D"], 
+121: ['R', "Allison, Steve"],
 103: ["D", "Anchia, Rafael M."],
 56: ["R", "Anderson, Charles 'Doc'"],
 57: ["R", "Ashby, Trent"],
@@ -347,5 +347,7 @@ export const houseMembers = {
 96: ["R", "Zedler, Bill"],
 28: ["R", "Zerwas, John"],
 45: ["D", "Zwiener, Erin"],
+145: ['', ''],
+125: ['', ''],
 }
 
