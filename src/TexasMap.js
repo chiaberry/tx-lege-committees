@@ -8,6 +8,10 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import './App.css';
 
 
@@ -33,7 +37,8 @@ class TexasMap extends Component {
       },
       counties: [],
       districts: [],
-      comName: 'test',
+      com: 0,
+      comName: 'Test 123',
       mapStyle: {
         "version": 8,
         "name": "default",
@@ -81,6 +86,7 @@ class TexasMap extends Component {
   }
 
   addMapLayer() {
+    console.log(this.state)
     const map = this.reactMap.getMap();
     map.addLayer({
       id: 'districtsPick',
@@ -95,20 +101,20 @@ class TexasMap extends Component {
     });
   }
 
-  handleChange(evt) {
+  handleChange(committee) {
+    console.log(committee)
     this.removeMapLayer();
-    const answer = house.filter(obj => (obj.id === evt.target.value))
-    console.log(answer);
+    const answer = house.filter(obj => (obj.id === committee.id))
     this.setState(
       { 
         districts: ['in', 'DIST_NBR'].concat(answer[0].districts),
         comName: answer[0].name,
+        com: answer[0].id
       }, 
       this.addMapLayer);
   }
 
   render() {
-    console.log(this.state)
     const { districts } = this.state;
     return (
       <div>
@@ -116,36 +122,20 @@ class TexasMap extends Component {
         <Grid container spacing={24}>
           <Grid item xs={4}>
           <div className="committees">
-            <FormControl
-              fullWidth
-            >
-              <InputLabel htmlFor="house-list">House Committee</InputLabel>
-              <Select
-                value={this.state.comName}
-                onChange={this.handleChange}
-                autoWidth
-                inputProps={{
-                  name: 'House Committees',
-                  id: 'house-list',
-                }}
-              >
-                {house.map(com => (
-                  <MenuItem value={com.id}>{com.name}</MenuItem>
-                  ))
-                }
-              </Select>
-            </FormControl>
-            {// <select name={'house'} onChange={evt=> {
-            //   this.removeMapLayer();
-            //   const answer = house.filter(obj => (obj.id===evt.target.value))
-            //   this.setState({districts: ['in', 'DIST_NBR'].concat(answer[0].districts)}, this.addMapLayer)
-            // }}>
-            //   <option value={[]}>{''}</option>
-            //   {house.map(com => (
-            //     <option key={com.id} value={com.id}> {com.name}</option>))}
 
-            // </select>
-          }
+
+          <List dense>
+            {house.map(com => (
+                <ListItem
+                  key={com.id}
+                  onClick={() => this.handleChange(com)}
+                  selected={com.id === this.state.com}
+                >
+                  <ListItemText primary={com.name} />
+                </ListItem>
+              ))}
+          </List>
+
           </div>
             <div> 
             <ul>
