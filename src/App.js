@@ -9,7 +9,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TexasMap />
+        <TexasMap map={"Texas_State_House_Districts-9q65q4"}/>
       </div>
     );
   }

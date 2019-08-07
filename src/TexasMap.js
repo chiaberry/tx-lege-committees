@@ -25,8 +25,12 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
+  layout: {
+    width: 'auto',
+    margin: 20,
+  },
   committees: {
-    maxHeight: 300,
+    maxHeight: 250,
     overflow: 'scroll'
   },
 });
@@ -54,13 +58,15 @@ class TexasMap extends Component {
           'districts': {
             "type": 'vector', 
             "url": 'mapbox://chiaberry.cj584zqk'
+            // "url": 'mapbox://styles/chiaberry/cjrliarm24c712tqknss4x6gf'
           }
         },
          layers: [
           {
             id: 'districtsPick',
             source: 'districts',
-            'source-layer': 'Texas_State_House_Districts-9q65q4',
+            // 'source-layer': 'Texas_State_House_Districts-9q65q4',
+            'source-layer': this.props.map,
             type: 'fill',
             paint: {
               "fill-outline-color": 'black',
@@ -85,6 +91,7 @@ class TexasMap extends Component {
         url: 'mapbox://chiaberry.cj584zqk'
       });
     })
+
   }
 
   removeMapLayer() {
@@ -106,6 +113,15 @@ class TexasMap extends Component {
       },
       filter: this.state.districts
     });
+
+    map.addLayer({
+      id: 'districtsNumber',
+      source: 'districts',
+      'source-layer': 'DIST_NBR',
+      type: 'symbol',
+      'symbol-placement': 'point', 
+      // filter: this.state.districts
+    });
   }
 
   handleChange(committee) {
@@ -124,8 +140,9 @@ class TexasMap extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <CssBaseline />
+        <div className={classes.layout}>
           <Toolbar>
             <Typography
               component="h1"
@@ -189,11 +206,6 @@ class TexasMap extends Component {
                 })}
               </TableBody>
             </Table>
-
-                {/*this.state.districts.slice(2).map(d => (
-                <li> {houseMembers[d] ? 
-                  `${d} - ${houseMembers[d][1]}, ${houseMembers[d][0]||''}` :
-                  d}</li>))*/}
             </Paper>
           </Grid>
         <Grid item xs={8}>
@@ -203,11 +215,13 @@ class TexasMap extends Component {
             onViewportChange={(viewport) => this.setState({viewport})}
             mapboxApiAccessToken={MBTOKEN}
             onLoad={()=>console.log('loaded ', this.state.mapStyle)}
-            mapStyle={'mapbox://styles/mapbox/outdoors-v9'}
+            // mapStyle={'mapbox://styles/mapbox/streets-v8'}
+            mapStyle={'mapbox://styles/chiaberry/cjrliarm24c712tqknss4x6gf'}
           />
         </Grid>
         </Grid>
       </div>
+      </React.Fragment>
     );
   }
 }
